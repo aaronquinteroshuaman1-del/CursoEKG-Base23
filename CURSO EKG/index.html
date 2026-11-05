@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="pageHeadTitle">Curso Extracurricular EKG | Ponencias y Grabaciones</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts & Phosphor Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            flyer: {
+              wine950: '#2b0307',
+              wine900: '#3f060b',
+              wine800: '#5e0b13',
+              crimson700: '#8c111e',
+              crimson600: '#a81827',
+              cream50: '#fffbf7',
+              cream100: '#faede1',
+              cream200: '#f5dac4',
+              gold500: '#f0ad4e',
+              gold400: '#fbbf24'
+            }
+          },
+          fontFamily: {
+            sans: ['Montserrat', 'sans-serif'],
+            serif: ['Cinzel', 'serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .ekg-grid-overlay {
+      background-size: 18px 18px, 90px 90px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(to right, rgba(255, 255, 255, 0.09) 1.5px, transparent 1.5px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.09) 1.5px, transparent 1.5px);
+    }
+    .flyer-capsule {
+      background: #ffffff;
+      border: 3px solid #8c111e;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px -5px rgba(63, 6, 11, 0.12);
+    }
+    .title-banner {
+      background: radial-gradient(ellipse at center, #8c111e 0%, #4a060d 75%, #2b0307 100%);
+      border: 3px solid #faede1;
+      border-radius: 9999px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+    }
+    .ekg-title-stroke {
+      color: #ffffff;
+      text-shadow: 0 4px 0 #2b0307, 0 8px 16px rgba(0,0,0,0.65);
+      letter-spacing: 4px;
+    }
+  </style>
+</head>
+<body class="bg-flyer-cream50 text-slate-800 font-sans min-h-screen flex flex-col antialiased selection:bg-flyer-crimson700 selection:text-white">
+
+  <!-- ============================================================== -->
+  <!-- MODAL DE ENTRADA: ACCESO                                       -->
+  <!-- ============================================================== -->
+  <div id="accessGateModal" class="fixed inset-0 z-50 bg-flyer-wine950/95 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border-4 border-flyer-crimson700 transition-all">
+      <div class="bg-gradient-to-r from-flyer-wine900 via-flyer-crimson700 to-flyer-wine900 text-white p-6 text-center">
+        <h2 class="text-3xl font-black font-serif tracking-widest uppercase text-amber-200">ACCESO</h2>
+        <p class="text-xs text-flyer-cream100 font-semibold tracking-wider uppercase mt-1">Curso Extracurricular EKG</p>
+      </div>
+
+      <div class="p-6 sm:p-8 space-y-5">
+        <p class="text-xs sm:text-sm text-slate-600 text-center font-medium leading-relaxed">
+          Ingresa tu DNI para acceder a las ponencias y materiales del curso.
+        </p>
+
+        <form id="accessForm" onsubmit="event.preventDefault(); checkCredentials();" class="space-y-4">
+          <div>
+            <label for="dniInput" class="block text-xs font-black text-flyer-wine900 uppercase tracking-wider mb-1.5">
+              DNI
+            </label>
+            <div class="relative">
+              <i class="ph-bold ph-identification-card text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 text-xl"></i>
+              <input 
+                type="text" 
+                id="dniInput" 
+                placeholder="Ingresa tu DNI" 
+                class="w-full pl-11 pr-4 py-3 rounded-xl border-2 border-slate-300 focus:border-flyer-crimson700 focus:ring-4 focus:ring-flyer-crimson700/10 outline-none font-mono font-bold text-slate-800 text-base uppercase tracking-wider transition-all"
+                required
+                autocomplete="off"
+              >
+            </div>
+            
+            <p id="authError" class="text-xs text-red-600 font-bold mt-2 text-center hidden flex items-center justify-center gap-1">
+              <i class="ph-bold ph-warning-circle text-sm"></i>
+              <span>El DNI ingresado no figura como registrado o verificado.</span>
+            </p>
+          </div>
+
+          <button 
+            type="submit" 
+            class="w-full bg-flyer-crimson700 hover:bg-flyer-crimson600 text-white font-extrabold uppercase tracking-wider py-3.5 px-6 rounded-xl transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2 text-xs"
+          >
+            <span>Ingresar a la Plataforma</span>
+            <i class="ph-bold ph-arrow-right text-base"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- BARRA DE NAVEGACIÓN                                            -->
+  <!-- ============================================================== -->
+  <header class="bg-flyer-wine900 text-white border-b-4 border-flyer-crimson700 sticky top-0 z-40 shadow-xl">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-flyer-crimson700 flex items-center justify-center shadow-md font-serif font-black text-white text-base border border-amber-300/40">
+          EKG
+        </div>
+        <div>
+          <span id="navCourseSubtitle" class="text-[10px] font-bold uppercase tracking-widest text-flyer-cream100 block leading-tight">Curso Extracurricular</span>
+          <span id="navCourseTitle" class="text-sm sm:text-base font-extrabold leading-tight text-white">Plataforma de Ponencias</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Botón Panel Comité (Visible solo para administradores) -->
+        <button 
+          id="btnCmsOpen" 
+          onclick="openCmsModal()" 
+          class="hidden items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-flyer-wine950 font-black text-xs transition-all shadow-md active:scale-95 border border-amber-500"
+          title="Abrir Panel CMS de Edición Visual"
+        >
+          <i class="ph-bold ph-sliders-horizontal text-base"></i>
+          <span>Panel Comité</span>
+        </button>
+
+        <div id="userStatusBadge" class="text-xs px-3 py-1.5 rounded-xl bg-flyer-wine950 font-mono text-flyer-cream100 border border-flyer-crimson600 flex items-center gap-1.5">
+          <i class="ph-bold ph-user text-amber-300"></i>
+          <span id="lblUserDni">---</span>
+        </div>
+
+        <button 
+          onclick="logout()" 
+          class="text-xs px-2.5 py-1.5 rounded-lg text-rose-200 hover:text-white hover:bg-white/10 transition-colors font-semibold"
+          title="Cerrar sesión"
+        >
+          Salir
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================================================== -->
+  <!-- HERO BANNER                                                    -->
+  <!-- ============================================================== -->
+  <section class="relative bg-gradient-to-b from-flyer-wine950 via-flyer-wine900 to-flyer-wine950 text-white py-12 px-4 overflow-hidden ekg-grid-overlay border-b-4 border-amber-300/70">
+    <div class="max-w-4xl mx-auto text-center relative z-10 space-y-4">
+      <div class="inline-block title-banner px-6 sm:px-8 py-2">
+        <span id="bannerTagText" class="text-xs sm:text-sm font-black tracking-widest uppercase text-flyer-cream100">
+          CURSO EXTRACURRICULAR
+        </span>
+      </div>
+
+      <h1 id="bannerMainTitle" class="text-6xl sm:text-8xl font-black font-serif tracking-widest text-white ekg-title-stroke leading-none py-1">
+        EKG
+      </h1>
+
+      <p id="bannerDescText" class="text-sm sm:text-base text-flyer-cream100 font-medium max-w-xl mx-auto">
+        Repositorio centralizado de grabaciones de ponencias por fecha y material de estudio.
+      </p>
+
+      <div id="adminIndicatorBar" class="hidden pt-2">
+        <span class="inline-flex items-center gap-1.5 bg-amber-400 text-flyer-wine950 font-black text-xs uppercase px-4 py-1.5 rounded-full shadow-lg">
+          <i class="ph-bold ph-shield-check text-sm"></i>
+          Sesión de Administrador (Edición CMS habilitada)
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================== -->
+  <!-- CONTENIDO: BUSCADOR, FILTROS Y GRABACIONES                     -->
+  <!-- ============================================================== -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex-grow w-full space-y-8">
+    <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border-2 border-slate-200 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="relative w-full md:w-80">
+        <i class="ph-bold ph-magnifying-glass text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 text-base"></i>
+        <input 
+          type="text" 
+          id="searchInput" 
+          oninput="handleSearch(event)"
+          placeholder="Buscar tema o ponente..." 
+          class="w-full pl-10 pr-4 py-2.5 bg-slate-50 rounded-xl border border-slate-300 focus:border-flyer-crimson700 focus:bg-white outline-none text-xs sm:text-sm font-medium transition-all"
+        >
+      </div>
+
+      <div class="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0" id="filterContainer">
+        <button onclick="setFilter('all', this)" class="filter-pill px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all bg-flyer-crimson700 text-white shadow-sm">
+          Todos
+        </button>
+        <button onclick="setFilter('Básico', this)" class="filter-pill px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-300">
+          Básico
+        </button>
+        <button onclick="setFilter('Isquemia', this)" class="filter-pill px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-300">
+          Isquemia
+        </button>
+        <button onclick="setFilter('Arritmias', this)" class="filter-pill px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-300">
+          Arritmias
+        </button>
+      </div>
+    </div>
+
+    <!-- SECCIÓN: GRABACIONES -->
+    <section>
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h2 class="text-2xl sm:text-3xl font-serif font-black text-flyer-wine900 uppercase">Grabaciones</h2>
+          <p class="text-xs sm:text-sm text-slate-600 font-medium">Clases impartidas organizadas por fecha y temática</p>
+        </div>
+        <span id="classCountTag" class="text-xs font-bold text-flyer-wine900 bg-rose-100 border border-rose-300 px-3 py-1 rounded-full font-mono">
+          0 clases
+        </span>
+      </div>
+
+      <div id="classesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    </section>
+  </main>
+
+  <!-- ============================================================== -->
+  <!-- MODAL VISOR DE VIDEO                                           -->
+  <!-- ============================================================== -->
+  <div id="videoModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-flyer-wine950 rounded-2xl w-full max-w-4xl overflow-hidden shadow-2xl border-2 border-flyer-crimson700 flex flex-col">
+      <div class="bg-flyer-wine900 text-white p-4 flex items-center justify-between border-b border-flyer-crimson700">
+        <div>
+          <h3 id="modalVideoTitle" class="font-extrabold text-sm sm:text-base line-clamp-1">Reproduciendo sesión</h3>
+          <p id="modalVideoSpeaker" class="text-xs text-amber-200 font-medium">Ponente</p>
+        </div>
+        <button onclick="closeVideoModal()" class="p-1.5 hover:bg-white/10 rounded-lg text-white transition-colors">
+          <i class="ph-bold ph-x text-xl"></i>
+        </button>
+      </div>
+      <div class="relative w-full aspect-video bg-black">
+        <iframe id="videoIframe" class="w-full h-full" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write-edge; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL: PANEL COMITÉ (CMS VISUAL CON 4 PESTAÑAS)                -->
+  <!-- ============================================================== -->
+  <div id="cmsModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-5">
+    <div class="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-hidden shadow-2xl border-4 border-amber-400 flex flex-col">
+      
+      <!-- Encabezado del CMS -->
+      <div class="bg-gradient-to-r from-flyer-wine950 via-flyer-wine900 to-flyer-wine950 text-white p-4 sm:p-5 flex items-center justify-between border-b-2 border-amber-400">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-amber-400 text-flyer-wine950 font-black flex items-center justify-center">
+            <i class="ph-bold ph-sliders-horizontal text-lg"></i>
+          </div>
+          <div>
+            <h3 class="text-base sm:text-lg font-black uppercase tracking-wider text-amber-300">Panel Comité (CMS)</h3>
+            <p class="text-[11px] text-slate-300">Edición visual de accesos, ponencias y textos</p>
+          </div>
+        </div>
+        <button onclick="closeCmsModal()" class="p-1.5 hover:bg-white/10 rounded-lg text-white transition">
+          <i class="ph-bold ph-x text-xl"></i>
+        </button>
+      </div>
+
+      <!-- Barra de Pestañas -->
+      <div class="flex border-b border-slate-200 bg-slate-50 overflow-x-auto text-xs font-black uppercase tracking-wider">
+        <button onclick="switchTab('dnis', this)" class="cms-tab px-4 py-3 border-b-2 border-flyer-crimson700 text-flyer-crimson700 bg-white flex items-center gap-1.5 whitespace-nowrap">
+          <i class="ph-bold ph-identification-card text-base"></i>
+          <span>1. Gestión de DNIs</span>
+        </button>
+        <button onclick="switchTab('classes', this)" class="cms-tab px-4 py-3 border-b-2 border-transparent text-slate-600 hover:text-flyer-crimson700 flex items-center gap-1.5 whitespace-nowrap">
+          <i class="ph-bold ph-video-camera text-base"></i>
+          <span>2. Ponencias y Clases</span>
+        </button>
+        <button onclick="switchTab('texts', this)" class="cms-tab px-4 py-3 border-b-2 border-transparent text-slate-600 hover:text-flyer-crimson700 flex items-center gap-1.5 whitespace-nowrap">
+          <i class="ph-bold ph-text-aa text-base"></i>
+          <span>3. Textos de la Web</span>
+        </button>
+        <button onclick="switchTab('export', this)" class="cms-tab px-4 py-3 border-b-2 border-transparent text-slate-600 hover:text-flyer-crimson700 flex items-center gap-1.5 whitespace-nowrap">
+          <i class="ph-bold ph-download-simple text-base text-amber-600"></i>
+          <span>4. Copia / Exportar</span>
+        </button>
+      </div>
+
+      <!-- Contenido desplazable de las Pestañas -->
+      <div class="p-5 sm:p-6 overflow-y-auto space-y-6 flex-grow text-xs text-slate-700">
+
+        <!-- PESTAÑA 1: GESTIÓN DE DNIs -->
+        <div id="tabContent-dnis" class="cms-panel-tab space-y-5">
+          <div class="bg-rose-50 border border-rose-200 rounded-xl p-3.5">
+            <h4 class="font-extrabold text-flyer-wine900 text-sm mb-1 flex items-center gap-1.5">
+              <i class="ph-bold ph-user-plus text-base text-flyer-crimson700"></i>
+              <span>Agregar DNIs de Alumnos que Pagaron</span>
+            </h4>
+            <p class="text-[11px] text-slate-600 mb-3">
+              Puedes ingresar un DNI individual o pegar una lista completa separados por comas (Ej: <span class="font-mono font-bold">72481920, 48291039, 75618293</span>).
+            </p>
+            <div class="flex gap-2">
+              <input type="text" id="newDniInput" placeholder="72481920, 48291039..." class="flex-grow px-3 py-2 border rounded-xl font-mono text-xs outline-none focus:border-flyer-crimson700 bg-white">
+              <button onclick="addDnisFromInput()" class="px-4 py-2 bg-flyer-crimson700 hover:bg-flyer-crimson600 text-white font-black uppercase tracking-wider rounded-xl transition shadow active:scale-95">
+                Agregar
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <h5 class="font-black text-slate-800 uppercase tracking-wider text-xs">
+                DNIs Habilitados (<span id="dnisCounter">0</span>)
+              </h5>
+              <button onclick="clearAllDnis()" class="text-[11px] text-red-600 hover:underline font-bold">
+                Limpiar lista
+              </button>
+            </div>
+            <div id="dnisChipsContainer" class="flex flex-wrap gap-2 max-h-56 overflow-y-auto p-3 bg-slate-50 border border-slate-200 rounded-xl">
+              <!-- Renderizado de chips DNI -->
+            </div>
+          </div>
+        </div>
+
+        <!-- PESTAÑA 2: PONENCIAS Y CLASES -->
+        <div id="tabContent-classes" class="cms-panel-tab hidden space-y-6">
+          <form id="cmsNewClassForm" onsubmit="event.preventDefault(); addClassFromCms();" class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
+            <h4 class="font-black text-flyer-wine900 text-xs uppercase tracking-wider flex items-center gap-1.5">
+              <i class="ph-bold ph-plus-circle text-base text-flyer-crimson700"></i>
+              <span>Nueva Ponencia o Grabación</span>
+            </h4>
+            
+            <div>
+              <label class="block font-bold text-slate-700 uppercase mb-1 text-[11px]">Título de la ponencia</label>
+              <input type="text" id="cmsTitle" required placeholder="Ej: Bloqueos de Rama y Hemibloqueos" class="w-full px-3 py-2 border rounded-xl focus:border-flyer-crimson700 outline-none text-xs bg-white">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block font-bold text-slate-700 uppercase mb-1 text-[11px]">Ponente</label>
+                <input type="text" id="cmsSpeaker" required placeholder="Ej: Dr. Manuel Soto" class="w-full px-3 py-2 border rounded-xl focus:border-flyer-crimson700 outline-none text-xs bg-white">
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 uppercase mb-1 text-[11px]">Módulo</label>
+                <select id="cmsModule" class="w-full px-3 py-2 border rounded-xl focus:border-flyer-crimson700 outline-none text-xs bg-white font-semibold">
+                  <option value="Básico">Básico</option>
+                  <option value="Isquemia">Isquemia</option>
+                  <option value="Arritmias">Arritmias</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block font-bold text-slate-700 uppercase mb-1 text-[11px]">Fecha de la clase</label>
+                <input type="date" id="cmsDate" required class="w-full px-3 py-2 border rounded-xl focus:border-flyer-crimson700 outline-none text-xs bg-white">
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 uppercase mb-1 text-[11px]">Enlace de Diapositivas (Drive / PDF)</label>
+                <input type="url" id="cmsSlidesUrl" placeholder="https://drive.google.com/..." class="w-full px-3 py-2 border rounded-xl focus:border-flyer-crimson700 outline-none text-xs bg-white font-mono">
+              </div>
+            </div>
+
+            <div>
+              <label class="block font-bold text-slate-700 uppercase mb-1 text-[11px]">Enlace de la Grabación (YouTube o Google Drive)</label>
+              <input type="url" id="cmsVideoUrl" required placeholder="https://www.youtube.com/watch?v=... o Drive" class="w-full px-3 py-2 border rounded-xl focus:border-flyer-crimson700 outline-none text-xs bg-white font-mono">
+            </div>
+
+            <button type="submit" class="w-full py-2.5 bg-flyer-crimson700 hover:bg-flyer-crimson600 text-white font-black uppercase tracking-wider rounded-xl transition shadow active:scale-95">
+              Publicar Ponencia
+            </button>
+          </form>
+
+          <div>
+            <h5 class="font-black text-slate-800 uppercase tracking-wider text-xs mb-2">Clases Publicadas</h5>
+            <div id="cmsClassesList" class="space-y-2 max-h-56 overflow-y-auto">
+              <!-- Renderizado de ponencias para eliminar -->
+            </div>
+          </div>
+        </div>
+
+        <!-- PESTAÑA 3: TEXTOS DE LA WEB -->
+        <div id="tabContent-texts" class="cms-panel-tab hidden space-y-4">
+          <p class="text-[11px] text-slate-500">Modifica cualquier texto visible en la web en tiempo real sin tocar código.</p>
+
+          <div class="space-y-3">
+            <div>
+              <label class="block font-bold text-slate-700 uppercase mb-1 text-[11px]">Título de la Barra Superior</label>
+              <input type="text" id="cmsTxtNavTitle" class="w-full px-3 py-2 border rounded-xl text-xs outline-none focus:border-flyer-crimson700">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 uppercase mb-1 text-[11px]">Subtítulo de la Barra</label>
+              <input type="text" id="cmsTxtNavSubtitle" class="w-full px-3 py-2 border rounded-xl text-xs outline-none focus:border-flyer-crimson700">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 uppercase mb-1 text-[11px]">Cinta de Banner (Texto superior)</label>
+              <input type="text" id="cmsTxtBannerTag" class="w-full px-3 py-2 border rounded-xl text-xs outline-none focus:border-flyer-crimson700">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 uppercase mb-1 text-[11px]">Título Principal del Banner</label>
+              <input type="text" id="cmsTxtBannerMain" class="w-full px-3 py-2 border rounded-xl text-xs outline-none focus:border-flyer-crimson700 font-serif font-black">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 uppercase mb-1 text-[11px]">Descripción del Banner</label>
+              <textarea id="cmsTxtBannerDesc" rows="2" class="w-full px-3 py-2 border rounded-xl text-xs outline-none focus:border-flyer-crimson700"></textarea>
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 uppercase mb-1 text-[11px]">Texto del Pie de Página</label>
+              <input type="text" id="cmsTxtFooter" class="w-full px-3 py-2 border rounded-xl text-xs outline-none focus:border-flyer-crimson700">
+            </div>
+
+            <button onclick="saveCmsTexts()" class="px-5 py-2.5 bg-flyer-crimson700 hover:bg-flyer-crimson600 text-white font-black uppercase tracking-wider rounded-xl transition shadow active:scale-95">
+              Guardar Cambios de Texto
+            </button>
+          </div>
+        </div>
+
+        <!-- PESTAÑA 4: COPIA / EXPORTAR -->
+        <div id="tabContent-export" class="cms-panel-tab hidden space-y-4">
+          <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-amber-900">
+            <h4 class="font-black text-xs uppercase tracking-wider flex items-center gap-1.5 mb-1 text-amber-950">
+              <i class="ph-bold ph-cloud-arrow-down text-lg"></i>
+              <span>Descargar o Copiar Código Actualizado</span>
+            </h4>
+            <p class="text-[11px] leading-relaxed text-amber-800">
+              Todos tus DNIs, clases y textos modificados ya están guardados en tu navegador actual. Si deseas actualizar tu repositorio de GitHub Pages o subirlo nuevamente a Netlify Drop para que se mantenga de por vida en cualquier servidor sin bases de datos externas, usa este botón:
+            </p>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-3">
+            <button onclick="downloadUpdatedHtml()" class="flex-1 py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-black uppercase tracking-wider text-xs rounded-xl transition shadow flex items-center justify-center gap-2">
+              <i class="ph-bold ph-download-simple text-base"></i>
+              <span>Descargar index.html Actualizado</span>
+            </button>
+            <button onclick="copyUpdatedHtml()" class="py-3 px-4 bg-slate-800 hover:bg-slate-900 text-white font-black uppercase tracking-wider text-xs rounded-xl transition shadow flex items-center justify-center gap-2">
+              <i class="ph-bold ph-copy text-base"></i>
+              <span>Copiar Código</span>
+            </button>
+          </div>
+
+          <p id="exportNotice" class="text-xs font-bold text-emerald-700 text-center hidden">
+            ¡Código copiado al portapapeles exitosamente!
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- PIE DE PÁGINA                                                  -->
+  <!-- ============================================================== -->
+  <footer class="bg-flyer-wine950 text-flyer-cream100 py-6 px-4 border-t-4 border-flyer-crimson700 text-center text-xs">
+    <p id="footerMainText" class="font-bold uppercase tracking-wider">Curso Extracurricular de Electrocardiograma</p>
+    <p class="text-rose-200/80 mt-1">Uso exclusivo para participantes registrados en el taller</p>
+  </footer>
+
+  <!-- ============================================================== -->
+  <!-- JAVASCRIPT: CMS, ROLES Y PERSISTENCIA                          -->
+  <!-- ============================================================== -->
+  <script>
+    const MASTER_ADMIN_KEY = 'ADMINBASE23-EKG';
+
+    // DATOS PREDETERMINADOS (Se inyectan si el usuario aún no editó nada)
+    const DEFAULT_DNIS = ['72481920', '48291039', '75618293', '71234567', '80123456'];
+
+    const DEFAULT_CLASSES = [
+      {
+        id: 'cls-1',
+        title: 'Calibración, Vectores Cardíacos y Derivaciones',
+        speaker: 'Dr. Luis Alarcón',
+        date: '2026-03-02',
+        module: 'Básico',
+        videoUrl: 'https://www.youtube.com/watch?v=M7lc1UVf-VE',
+        slidesUrl: 'https://drive.google.com'
+      },
+      {
+        id: 'cls-2',
+        title: 'Onda P, Intervalo PR y Crecimientos Cavitarios',
+        speaker: 'Dra. Claudia Paredes',
+        date: '2026-03-05',
+        module: 'Básico',
+        videoUrl: 'https://www.youtube.com/watch?v=M7lc1UVf-VE',
+        slidesUrl: 'https://drive.google.com'
+      },
+      {
+        id: 'cls-3',
+        title: 'Diagnóstico Electrocardiográfico de Isquemia e Infarto (SCACEST)',
+        speaker: 'Dr. Marco Antonio',
+        date: '2026-03-09',
+        module: 'Isquemia',
+        videoUrl: 'https://www.youtube.com/watch?v=M7lc1UVf-VE',
+        slidesUrl: 'https://drive.google.com'
+      },
+      {
+        id: 'cls-4',
+        title: 'Fibrilación Auricular, Flutter y Taquicardias Paroxísticas',
+        speaker: 'Dr. Ricardo Espinoza',
+        date: '2026-03-12',
+        module: 'Arritmias',
+        videoUrl: 'https://www.youtube.com/watch?v=M7lc1UVf-VE',
+        slidesUrl: 'https://drive.google.com'
+      }
+    ];
+
+    const DEFAULT_TEXTS = {
+      navTitle: 'Plataforma de Ponencias',
+      navSubtitle: 'Curso Extracurricular',
+      bannerTag: 'CURSO EXTRACURRICULAR',
+      bannerMain: 'EKG',
+      bannerDesc: 'Repositorio centralizado de grabaciones de ponencias por fecha y material de estudio.',
+      footer: 'Curso Extracurricular de Electrocardiograma'
+    };
+
+    // Estado en ejecución
+    let dnisList = [];
+    let classesList = [];
+    let customTexts = {};
+    let currentFilter = 'all';
+    let searchQuery = '';
+
+    // ==========================================
+    // INICIALIZACIÓN
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', () => {
+      loadStorageData();
+      applyTexts();
+      initAuth();
+      renderClasses();
+      renderCmsDnis();
+      renderCmsClasses();
+      syncCmsTextInputs();
+    });
+
+    function loadStorageData() {
+      // 1. DNIs
+      const storedDnis = localStorage.getItem('ekg_cms_dnis');
+      dnisList = storedDnis ? JSON.parse(storedDnis) : [...DEFAULT_DNIS];
+
+      // 2. Clases
+      const storedClasses = localStorage.getItem('ekg_cms_classes');
+      classesList = storedClasses ? JSON.parse(storedClasses) : [...DEFAULT_CLASSES];
+
+      // 3. Textos
+      const storedTexts = localStorage.getItem('ekg_cms_texts');
+      customTexts = storedTexts ? JSON.parse(storedTexts) : { ...DEFAULT_TEXTS };
+    }
+
+    function applyTexts() {
+      document.getElementById('navCourseTitle').innerText = customTexts.navTitle;
+      document.getElementById('navCourseSubtitle').innerText = customTexts.navSubtitle;
+      document.getElementById('bannerTagText').innerText = customTexts.bannerTag;
+      document.getElementById('bannerMainTitle').innerText = customTexts.bannerMain;
+      document.getElementById('bannerDescText').innerText = customTexts.bannerDesc;
+      document.getElementById('footerMainText').innerText = customTexts.footer;
+    }
+
+    // ==========================================
+    // AUTENTICACIÓN Y ROLES
+    // ==========================================
+    function initAuth() {
+      const storedRole = sessionStorage.getItem('ekg_user_role');
+      const storedDni = sessionStorage.getItem('ekg_user_dni');
+
+      if (storedRole && storedDni) {
+        document.getElementById('accessGateModal').classList.add('hidden');
+        document.getElementById('lblUserDni').innerText = storedDni;
+
+        if (storedRole === 'admin') {
+          // Vista Administrador: Habilita Panel Comité
+          document.getElementById('btnCmsOpen').classList.remove('hidden');
+          document.getElementById('btnCmsOpen').classList.add('flex');
+          document.getElementById('adminIndicatorBar').classList.remove('hidden');
+          document.getElementById('userStatusBadge').className = 'text-xs px-3 py-1.5 rounded-xl bg-amber-400 font-mono text-flyer-wine950 font-bold border border-amber-300 flex items-center gap-1.5';
+        } else {
+          // Vista Alumno: Oculta Panel Comité
+          document.getElementById('btnCmsOpen').classList.add('hidden');
+          document.getElementById('btnCmsOpen').classList.remove('flex');
+          document.getElementById('adminIndicatorBar').classList.add('hidden');
+        }
+      } else {
+        document.getElementById('accessGateModal').classList.remove('hidden');
+      }
+    }
+
+    function checkCredentials() {
+      const input = document.getElementById('dniInput').value.trim();
+      const err = document.getElementById('authError');
+
+      if (!input) return;
+
+      if (input === MASTER_ADMIN_KEY) {
+        sessionStorage.setItem('ekg_user_role', 'admin');
+        sessionStorage.setItem('ekg_user_dni', 'ADMIN');
+        initAuth();
+      } else if (dnisList.includes(input)) {
+        sessionStorage.setItem('ekg_user_role', 'student');
+        sessionStorage.setItem('ekg_user_dni', input);
+        initAuth();
+      } else {
+        err.classList.remove('hidden');
+      }
+    }
+
+    function logout() {
+      sessionStorage.clear();
+      location.reload();
+    }
+
+    // ==========================================
+    // RENDERIZADO DE PONENCIAS / GRABACIONES
+    // ==========================================
+    function renderClasses() {
+      const grid = document.getElementById('classesGrid');
+      grid.innerHTML = '';
+
+      const filtered = classesList.filter(item => {
+        const matchMod = (currentFilter === 'all') || (item.module.toLowerCase() === currentFilter.toLowerCase());
+        const matchSearch = !searchQuery || 
+          item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.speaker.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchMod && matchSearch;
+      });
+
+      document.getElementById('classCountTag').innerText = `${filtered.length} disponible(s)`;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full py-12 text-center text-slate-400 bg-white rounded-2xl border-2 border-dashed border-slate-300 p-6">
+            <i class="ph-bold ph-folder-dashed text-4xl text-slate-400 mb-2 inline-block"></i>
+            <p class="font-bold text-sm">No se encontraron ponencias con ese criterio.</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(item => {
+        const dateFormatted = item.date ? item.date.split('-').reverse().join('/') : 'Por definir';
+        const card = document.createElement('div');
+        card.className = "flyer-capsule p-5 sm:p-6 flex flex-col justify-between hover:shadow-xl transition-all duration-200";
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between text-xs mb-3">
+              <span class="px-3 py-1 rounded-full font-black bg-flyer-crimson700 text-white uppercase text-[10px] tracking-wider">
+                ${item.module}
+              </span>
+              <span class="font-bold text-slate-600 font-mono flex items-center gap-1">
+                <i class="ph-bold ph-calendar text-flyer-crimson700"></i> ${dateFormatted}
+              </span>
+            </div>
+
+            <h3 class="text-base sm:text-lg font-black text-flyer-wine900 leading-snug line-clamp-2 mb-2">
+              ${item.title}
+            </h3>
+
+            <p class="text-xs font-semibold text-slate-600 mb-4 flex items-center gap-1.5">
+              <span>Ponente:</span> <strong class="text-flyer-crimson700">${item.speaker}</strong>
+            </p>
+          </div>
+
+          <div class="pt-4 border-t border-slate-200 flex items-center justify-between gap-2">
+            <button 
+              onclick="openVideoModal('${escapeForJs(item.title)}', '${escapeForJs(item.speaker)}', '${item.videoUrl}')"
+              class="flex-1 bg-flyer-crimson700 hover:bg-flyer-crimson600 text-white font-extrabold text-xs py-2.5 px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 shadow"
+            >
+              <i class="ph-bold ph-play-circle text-base text-amber-300"></i>
+              <span>Ver Grabación</span>
+            </button>
+            
+            ${item.slidesUrl ? `
+              <a 
+                href="${item.slidesUrl}" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="px-3 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl transition-all flex items-center gap-1 border border-slate-300"
+                title="Descargar Presentación"
+              >
+                <i class="ph-bold ph-file-pdf text-rose-600 text-base"></i>
+                <span>PDF</span>
+              </a>
+            ` : ''}
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function escapeForJs(str) {
+      return (str || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    }
+
+    function handleSearch(e) {
+      searchQuery = e.target.value.trim();
+      renderClasses();
+    }
+
+    function setFilter(filter, el) {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-pill').forEach(btn => {
+        btn.className = 'filter-pill px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-300';
+      });
+      el.className = 'filter-pill px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all bg-flyer-crimson700 text-white shadow-sm';
+      renderClasses();
+    }
+
+    // Modal Video
+    function openVideoModal(title, speaker, url) {
+      document.getElementById('modalVideoTitle').innerText = title;
+      document.getElementById('modalVideoSpeaker').innerText = `Ponente: ${speaker}`;
+
+      let embedUrl = url;
+      if (url.includes('youtube.com/watch?v=')) {
+        const id = url.split('v=')[1]?.split('&')[0];
+        embedUrl = `https://www.youtube.com/embed/${id}?autoplay=1`;
+      } else if (url.includes('youtu.be/')) {
+        const id = url.split('youtu.be/')[1]?.split('?')[0];
+        embedUrl = `https://www.youtube.com/embed/${id}?autoplay=1`;
+      } else if (url.includes('drive.google.com/file/d/')) {
+        embedUrl = url.replace('/view', '/preview');
+      }
+
+      document.getElementById('videoIframe').src = embedUrl;
+      const modal = document.getElementById('videoModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeVideoModal() {
+      const modal = document.getElementById('videoModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.getElementById('videoIframe').src = '';
+    }
+
+    // ==========================================
+    // CMS: PANEL DE ADMINISTRACIÓN VISUAL
+    // ==========================================
+    function openCmsModal() {
+      const m = document.getElementById('cmsModal');
+      m.classList.remove('hidden');
+      m.classList.add('flex');
+      renderCmsDnis();
+      renderCmsClasses();
+      syncCmsTextInputs();
+    }
+
+    function closeCmsModal() {
+      const m = document.getElementById('cmsModal');
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+    }
+
+    function switchTab(tabKey, btn) {
+      document.querySelectorAll('.cms-tab').forEach(b => {
+        b.className = 'cms-tab px-4 py-3 border-b-2 border-transparent text-slate-600 hover:text-flyer-crimson700 flex items-center gap-1.5 whitespace-nowrap';
+      });
+      btn.className = 'cms-tab px-4 py-3 border-b-2 border-flyer-crimson700 text-flyer-crimson700 bg-white flex items-center gap-1.5 whitespace-nowrap';
+
+      document.querySelectorAll('.cms-panel-tab').forEach(panel => panel.classList.add('hidden'));
+      document.getElementById(`tabContent-${tabKey}`).classList.remove('hidden');
+    }
+
+    // CMS - PESTAÑA 1: GESTIÓN DE DNIs
+    function renderCmsDnis() {
+      const container = document.getElementById('dnisChipsContainer');
+      document.getElementById('dnisCounter').innerText = dnisList.length;
+      container.innerHTML = '';
+
+      if (dnisList.length === 0) {
+        container.innerHTML = `<span class="text-xs text-slate-400 italic">No hay DNIs registrados aún.</span>`;
+        return;
+      }
+
+      dnisList.forEach(dni => {
+        const chip = document.createElement('div');
+        chip.className = "inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-slate-300 rounded-lg font-mono text-xs font-bold text-slate-800 shadow-sm";
+        chip.innerHTML = `
+          <span>${dni}</span>
+          <button onclick="removeDni('${dni}')" class="text-rose-600 hover:text-rose-800 font-black ml-1">
+            <i class="ph-bold ph-x"></i>
+          </button>
+        `;
+        container.appendChild(chip);
+      });
+    }
+
+    function addDnisFromInput() {
+      const input = document.getElementById('newDniInput');
+      const val = input.value.trim();
+      if (!val) return;
+
+      const items = val.split(/[,\n\s]+/).map(s => s.trim()).filter(Boolean);
+      let addedCount = 0;
+
+      items.forEach(d => {
+        if (!dnisList.includes(d)) {
+          dnisList.push(d);
+          addedCount++;
+        }
+      });
+
+      if (addedCount > 0) {
+        localStorage.setItem('ekg_cms_dnis', JSON.stringify(dnisList));
+        renderCmsDnis();
+        input.value = '';
+      }
+    }
+
+    function removeDni(dni) {
+      dnisList = dnisList.filter(d => d !== dni);
+      localStorage.setItem('ekg_cms_dnis', JSON.stringify(dnisList));
+      renderCmsDnis();
+    }
+
+    function clearAllDnis() {
+      dnisList = [];
+      localStorage.setItem('ekg_cms_dnis', JSON.stringify(dnisList));
+      renderCmsDnis();
+    }
+
+    // CMS - PESTAÑA 2: PONENCIAS
+    function addClassFromCms() {
+      const newClass = {
+        id: 'cls-' + Date.now(),
+        title: document.getElementById('cmsTitle').value.trim(),
+        speaker: document.getElementById('cmsSpeaker').value.trim(),
+        date: document.getElementById('cmsDate').value,
+        module: document.getElementById('cmsModule').value,
+        videoUrl: document.getElementById('cmsVideoUrl').value.trim(),
+        slidesUrl: document.getElementById('cmsSlidesUrl').value.trim()
+      };
+
+      classesList.unshift(newClass);
+      localStorage.setItem('ekg_cms_classes', JSON.stringify(classesList));
+      renderClasses();
+      renderCmsClasses();
+      document.getElementById('cmsNewClassForm').reset();
+    }
+
+    function renderCmsClasses() {
+      const box = document.getElementById('cmsClassesList');
+      box.innerHTML = '';
+
+      if (classesList.length === 0) {
+        box.innerHTML = `<p class="text-xs text-slate-400 italic">No hay clases registradas.</p>`;
+        return;
+      }
+
+      classesList.forEach(c => {
+        const row = document.createElement('div');
+        row.className = "flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs";
+        row.innerHTML = `
+          <div class="line-clamp-1 pr-2">
+            <span class="font-bold text-slate-800">${c.title}</span> 
+            <span class="text-slate-500 font-semibold">(${c.speaker} - ${c.module})</span>
+          </div>
+          <button onclick="deleteClass('${c.id}')" class="px-2 py-1 text-red-600 hover:bg-red-50 rounded font-bold transition flex items-center gap-1">
+            <i class="ph-bold ph-trash"></i>
+            <span>Eliminar</span>
+          </button>
+        `;
+        box.appendChild(row);
+      });
+    }
+
+    function deleteClass(id) {
+      classesList = classesList.filter(c => c.id !== id);
+      localStorage.setItem('ekg_cms_classes', JSON.stringify(classesList));
+      renderClasses();
+      renderCmsClasses();
+    }
+
+    // CMS - PESTAÑA 3: TEXTOS
+    function syncCmsTextInputs() {
+      document.getElementById('cmsTxtNavTitle').value = customTexts.navTitle;
+      document.getElementById('cmsTxtNavSubtitle').value = customTexts.navSubtitle;
+      document.getElementById('cmsTxtBannerTag').value = customTexts.bannerTag;
+      document.getElementById('cmsTxtBannerMain').value = customTexts.bannerMain;
+      document.getElementById('cmsTxtBannerDesc').value = customTexts.bannerDesc;
+      document.getElementById('cmsTxtFooter').value = customTexts.footer;
+    }
+
+    function saveCmsTexts() {
+      customTexts = {
+        navTitle: document.getElementById('cmsTxtNavTitle').value.trim(),
+        navSubtitle: document.getElementById('cmsTxtNavSubtitle').value.trim(),
+        bannerTag: document.getElementById('cmsTxtBannerTag').value.trim(),
+        bannerMain: document.getElementById('cmsTxtBannerMain').value.trim(),
+        bannerDesc: document.getElementById('cmsTxtBannerDesc').value.trim(),
+        footer: document.getElementById('cmsTxtFooter').value.trim()
+      };
+
+      localStorage.setItem('ekg_cms_texts', JSON.stringify(customTexts));
+      applyTexts();
+      alert('¡Textos actualizados y guardados en memoria correctamente!');
+    }
+
+    // CMS - PESTAÑA 4: EXPORTAR CÓDIGO ACTUALIZADO
+    function generateSerializedHtml() {
+      let html = document.documentElement.outerHTML;
+
+      // Inyectar datos actuales directamente en los valores por defecto del código exportado
+      const dnisStr = JSON.stringify(dnisList, null, 2);
+      const classesStr = JSON.stringify(classesList, null, 2);
+      const textsStr = JSON.stringify(customTexts, null, 2);
+
+      html = html.replace(/const DEFAULT_DNIS = \[[\s\S]*?\];/, `const DEFAULT_DNIS = ${dnisStr};`);
+      html = html.replace(/const DEFAULT_CLASSES = \[[\s\S]*?\];/, `const DEFAULT_CLASSES = ${classesStr};`);
+      html = html.replace(/const DEFAULT_TEXTS = \{[\s\S]*?\};/, `const DEFAULT_TEXTS = ${textsStr};`);
+
+      return "<!DOCTYPE html>\n" + html;
+    }
+
+    function downloadUpdatedHtml() {
+      const fullHtml = generateSerializedHtml();
+      const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'index.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function copyUpdatedHtml() {
+      const fullHtml = generateSerializedHtml();
+      const ta = document.createElement('textarea');
+      ta.value = fullHtml;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+
+      const notice = document.getElementById('exportNotice');
+      notice.classList.remove('hidden');
+      setTimeout(() => notice.classList.add('hidden'), 3500);
+    }
+  </script>
+</body>
+</html>
